@@ -1,8 +1,5 @@
-build:
-  commands:
-    - npm install
-    - npm run build
-
-start:
-  commands:
-    - npm start
+services:
+  default:
+    commands:
+      - npm install
+      - npm start
