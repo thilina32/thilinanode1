@@ -21,14 +21,5 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: install semver
-        run: npm install semver
-
-      - name:  install firebase-admin
-        run: npm install firebase-admin
-
-      - name:  install yt
-        run: npm install ytdl-core
-
-      - name:  run
-        run: node node.js
+      - name: Run Node.js program
+        run: npm start
