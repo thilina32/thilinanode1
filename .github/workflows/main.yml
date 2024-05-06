@@ -1,0 +1,34 @@
+name: Node.js CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: install semver
+        run: npm install semver
+
+      - name:  install firebase-admin
+        run: npm install firebase-admin
+
+      - name:  install yt
+        run: npm install ytdl-core
+
+      - name:  run
+        run: node node.js
