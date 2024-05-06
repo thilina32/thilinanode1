@@ -14,76 +14,74 @@ admin.initializeApp({
 const bucket = admin.storage().bucket();
 const db = admin.database();
 
-const aurl = 0;
+
 db.ref('url/').on("value", function(snapshot) {
     const data2 = snapshot.val();
-    if(aurl !== data2['url']){
-        aurl = data2['url']
-        const now = Date.now();
-        const filePath = now + "video.mp4";
-        ytdl(data2['url'], { quality: data2['q'] })
-        .pipe(fs.createWriteStream(filePath))
-        .on("finish", () => {
-            console.log("Video downloaded successfully.");
+    console.log('loding...')
+    const now = Date.now();
+    const filePath = now + "video.mp4";
+    ytdl(data2['url'], { quality: data2['q'] })
+    .pipe(fs.createWriteStream(filePath))
+    .on("finish", () => {
+        console.log("Video downloaded successfully.");
 
-            // Upload video to Firebase Storage
-            const fileName =  now+"video.mp4";
-            const destination = `videos/${fileName}`;
+        // Upload video to Firebase Storage
+        const fileName =  now+"video.mp4";
+        const destination = `videos/${fileName}`;
 
-            bucket.upload(filePath, { destination })
-            .then((uploadResponse) => {
-                console.log("Video uploaded to Firebase Storage successfully.");
+        bucket.upload(filePath, { destination })
+        .then((uploadResponse) => {
+            console.log("Video uploaded to Firebase Storage successfully.");
 
-                // Get the uploaded file
-                const uploadedFile = uploadResponse[0];
+            // Get the uploaded file
+            const uploadedFile = uploadResponse[0];
 
-                // Get a signed URL for the file with a longer expiration period
-                uploadedFile.getSignedUrl({
-                action: 'read',
-                expires: '01-01-2050' // or set a date far in the future
-                })
-                .then((signedUrl) => {
-                    console.log("URL of the uploaded video:", signedUrl);
-                    const urldata = {}
-                    urldata[now] = {
-                        url:signedUrl,
-                        name:data2['name']
-                    }
-                    db.ref("video/data")
-                    .update(urldata)
-                    .then(() => {
-                        console.log("Data set successfully.");
-                    })
-                    .catch((error) => {
-                        console.error("Error setting data:", error);
-                    });
+            // Get a signed URL for the file with a longer expiration period
+            uploadedFile.getSignedUrl({
+            action: 'read',
+            expires: '01-01-2050' // or set a date far in the future
+            })
+            .then((signedUrl) => {
+                console.log("URL of the uploaded video:", signedUrl);
+                const urldata = {}
+                urldata[now] = {
+                    url:signedUrl,
+                    name:data2['name']
+                }
+                db.ref("video/data")
+                .update(urldata)
+                .then(() => {
+                    console.log("Data set successfully.");
                 })
                 .catch((error) => {
-                    console.error("Error generating signed URL:", error);
+                    console.error("Error setting data:", error);
                 });
+            })
+            .catch((error) => {
+                console.error("Error generating signed URL:", error);
+            });
 
-                // Delete the local file
-                fs.unlink(filePath, (err) => {
+            // Delete the local file
+            fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error("Error deleting file:", err);
+            } else {
+                console.log("Local file deleted successfully:", filePath);
+            }
+            });
+        })
+        .catch((error) => {
+            console.error("Error uploading video to Firebase Storage:", error);
+            fs.unlink(filePath, (err) => {
                 if (err) {
                     console.error("Error deleting file:", err);
                 } else {
                     console.log("Local file deleted successfully:", filePath);
                 }
-                });
-            })
-            .catch((error) => {
-                console.error("Error uploading video to Firebase Storage:", error);
-                fs.unlink(filePath, (err) => {
-                    if (err) {
-                        console.error("Error deleting file:", err);
-                    } else {
-                        console.log("Local file deleted successfully:", filePath);
-                    }
-                });
             });
-        })
-        .on("error", (error) => {
-            console.error("Error downloading video:", error);
         });
-    }
+    })
+    .on("error", (error) => {
+        console.error("Error downloading video:", error);
+    });
 });
