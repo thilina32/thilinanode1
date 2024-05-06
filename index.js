@@ -16,13 +16,14 @@ const bucket = admin.storage().bucket();
 const videoUrl = "https://www.youtube.com/watch?v=TJ-WCWsYpIk"; // Replace with the YouTube video ID
 
 // Download video from YouTube
+const now = Date.now();
 ytdl(videoUrl)
-  .pipe(fs.createWriteStream("video.mp4"))
+  .pipe(fs.createWriteStream(now+"video.mp4"))
   .on("finish", () => {
     console.log("Video downloaded successfully.");
 
     // Upload video to Firebase Storage
-    const fileName = "video.mp4";
+    const fileName =  now+"video.mp4";
     const destination = `videos/${fileName}`;
 
     bucket.upload(fileName, { destination })
