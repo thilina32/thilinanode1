@@ -15,7 +15,7 @@ const bucket = admin.storage().bucket();
 const db = admin.database();
 
 
-db.ref('id/').on("value", function(snapshot) {
+db.ref('url/').on("value", function(snapshot) {
     const data2 = snapshot.val();
     const now = Date.now();
     const filePath = now + "video.mp4";
