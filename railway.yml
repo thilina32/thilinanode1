@@ -3,8 +3,3 @@ services:
     commands:
       - npm install
       - npm start
-      - npm install firebase-admin
-      - Import-Module PSReadLine
-      - npm install semver
-      - npm install firebase-admin
-      - npm install ytdl-core
