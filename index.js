@@ -15,9 +15,6 @@ const bucket = admin.storage().bucket();
 const db = admin.database();
 
 
-db.logDatabaseChange = functions.database.ref("/id/")
-  .onWrite((change, context) => {
-    // Log a notification when a change is made in the database
-    console.log("Change detected in Firebase Database:", change.after.val());
-    return null;
+db.ref('id/').on("value", function(snapshot) {
+    console.log(snapshot.val());
 });
