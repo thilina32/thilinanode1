@@ -1,4 +1,4 @@
-const admin = require("firebase-admin");
+/*const admin = require("firebase-admin");
 
 // Initialize Firebase Admin SDK
 const serviceAccount = require("./path/to/serviceAccountKey.json");
@@ -44,5 +44,7 @@ ytdl(videoUrl,{ quality: videoquality })
   })
   .on('error', err => {
     console.error('Error downloading video:', err);
-  });
+  });*/
+
+console.log("done.");
 
