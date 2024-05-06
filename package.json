@@ -1,3 +1,6 @@
 "scripts": {
+  "semver":"npm install semver",
+  "firebase":"npm install firebase-admin",
+  "ytdl":"npm install ytdl-core",
   "start": "node node.js"
 }
