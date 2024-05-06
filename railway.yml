@@ -1,5 +1,5 @@
 services:
   default:
     commands:
-      - npm install
+      - npm install firebase-admin ytdl-core
       - npm start
