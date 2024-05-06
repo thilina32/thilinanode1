@@ -1,4 +1,6 @@
-{
+{"scripts": {
+  "start": "node index.js"
+},
   "dependencies": {
     "firebase-admin": "^12.1.0",
     "semver": "^7.6.0",
