@@ -9,31 +9,13 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   storageBucket: "gs://thilina-52f9f.appspot.com", // Replace with your Firebase Storage bucket URL
 });
-
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://thilina-52f9f-default-rtdb.firebaseio.com/" // Replace with your Firebase Database URL
+});
 const bucket = admin.storage().bucket();
+const db = admin.database();
 
-// YouTube video URL
-const videoUrl = "https://www.youtube.com/watch?v=TJ-WCWsYpIk"; // Replace with the YouTube video ID
-
-// Download video from YouTube
-const now = Date.now();
-ytdl(videoUrl)
-  .pipe(fs.createWriteStream(now+"video.mp4"))
-  .on("finish", () => {
-    console.log("Video downloaded successfully.");
-
-    // Upload video to Firebase Storage
-    const fileName =  now+"video.mp4";
-    const destination = `videos/${fileName}`;
-
-    bucket.upload(fileName, { destination })
-      .then(() => {
-        console.log("Video uploaded to Firebase Storage successfully.");
-      })
-      .catch((error) => {
-        console.error("Error uploading video to Firebase Storage:", error);
-      });
-  })
-  .on("error", (error) => {
-    console.error("Error downloading video:", error);
-  });
+db.ref('./').on("value", function(snapshot) {
+    console.log(snapshot.val());
+});
