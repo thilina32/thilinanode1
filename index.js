@@ -7,13 +7,13 @@ const serviceAccount = require("./path/to/serviceAccountKey.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  storageBucket: "your-storage-bucket-url", // Replace with your Firebase Storage bucket URL
+  storageBucket: "gs://thilina-52f9f.appspot.com", // Replace with your Firebase Storage bucket URL
 });
 
 const bucket = admin.storage().bucket();
 
 // YouTube video URL
-const videoUrl = "https://www.youtube.com/watch?v=your-video-id"; // Replace with the YouTube video ID
+const videoUrl = "https://www.youtube.com/watch?v=TJ-WCWsYpIk"; // Replace with the YouTube video ID
 
 // Download video from YouTube
 ytdl(videoUrl)
