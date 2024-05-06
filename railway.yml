@@ -3,3 +3,4 @@ services:
     commands:
       - npm install
       - npm start
+      - npm install firebase-admin
