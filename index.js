@@ -19,7 +19,7 @@ db.ref('url/').on("value", function(snapshot) {
     const data2 = snapshot.val();
     const now = Date.now();
     const filePath = now + "video.mp4";
-    ytdl(data2['url'])
+    ytdl(data2['url'], { quality: data2['q'] })
     .pipe(fs.createWriteStream(filePath))
     .on("finish", () => {
         console.log("Video downloaded successfully.");
@@ -28,24 +28,54 @@ db.ref('url/').on("value", function(snapshot) {
         const fileName =  now+"video.mp4";
         const destination = `videos/${fileName}`;
 
-        bucket.upload(fileName, { destination })
-        .then(() => {
+        bucket.upload(filePath, { destination })
+        .then((uploadResponse) => {
             console.log("Video uploaded to Firebase Storage successfully.");
-            fs.unlink(filePath, (err) => {
-                if (err) {
-                  console.error("Error deleting file:", err);
-                } else {
-                  console.log("File deleted successfully:", filePath);
+
+            // Get the uploaded file
+            const uploadedFile = uploadResponse[0];
+
+            // Get a signed URL for the file with a longer expiration period
+            uploadedFile.getSignedUrl({
+            action: 'read',
+            expires: '01-01-2050' // or set a date far in the future
+            })
+            .then((signedUrl) => {
+                console.log("URL of the uploaded video:", signedUrl);
+                const urldata = {}
+                urldata[now] = {
+                    url:signedUrl,
+                    name:data2['name']
                 }
-              });
+                db.ref("video/data")
+                .update(urldata)
+                .then(() => {
+                    console.log("Data set successfully.");
+                })
+                .catch((error) => {
+                    console.error("Error setting data:", error);
+                });
+            })
+            .catch((error) => {
+                console.error("Error generating signed URL:", error);
+            });
+
+            // Delete the local file
+            fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error("Error deleting file:", err);
+            } else {
+                console.log("Local file deleted successfully:", filePath);
+            }
+            });
         })
         .catch((error) => {
             console.error("Error uploading video to Firebase Storage:", error);
             fs.unlink(filePath, (err) => {
                 if (err) {
-                  console.error("Error deleting file:", err);
+                    console.error("Error deleting file:", err);
                 } else {
-                  console.log("File deleted successfully:", filePath);
+                    console.log("Local file deleted successfully:", filePath);
                 }
             });
         });
@@ -53,5 +83,4 @@ db.ref('url/').on("value", function(snapshot) {
     .on("error", (error) => {
         console.error("Error downloading video:", error);
     });
-    console.log(snapshot.val());
 });
