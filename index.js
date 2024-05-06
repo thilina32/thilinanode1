@@ -16,6 +16,21 @@ admin.initializeApp({
 const bucket = admin.storage().bucket();
 const db = admin.database();
 
-db.ref('./').on("value", function(snapshot) {
-    console.log(snapshot.val());
-});
+
+db.logDatabaseChange = functions.database.ref("/id/")
+  .onWrite((change, context) => {
+    // Log a notification when a change is made in the database
+    console.log("Change detected in Firebase Database:", change.after.val());
+    
+    // You can also access additional information about the change and context
+    // For example:
+    // const newValue = change.after.val();
+    // const previousValue = change.before.val();
+    // const eventId = context.eventId;
+    // const timestamp = context.timestamp;
+    
+    // You can perform additional actions based on the database change here
+    
+    // Return a result if necessary
+    return null;
+  });
